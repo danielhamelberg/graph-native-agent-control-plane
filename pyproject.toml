@@ -27,6 +27,7 @@ dev = [
   "mypy>=1.17,<2",
   "pyright>=1.1.400,<2",
   "ruff>=0.12,<1",
+  "types-jsonschema>=4.26.0.20260518",
 ]
 
 [tool.hatch.build.targets.wheel]
