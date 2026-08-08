@@ -19,6 +19,11 @@ classifiers = [
 ]
 dependencies = ["jsonschema[format]>=4.25,<5"]
 
+[project.urls]
+Homepage = "https://github.com/danielhamelberg/graph-native-agent-control-plane"
+Repository = "https://github.com/danielhamelberg/graph-native-agent-control-plane.git"
+Issues = "https://github.com/danielhamelberg/graph-native-agent-control-plane/issues"
+
 [dependency-groups]
 dev = [
   "build>=1.2,<2",

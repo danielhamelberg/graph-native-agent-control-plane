@@ -1,5 +1,9 @@
 # Graph-Native Agent Control Plane
 
+[![Conformance](https://github.com/danielhamelberg/graph-native-agent-control-plane/actions/workflows/conformance.yml/badge.svg)](https://github.com/danielhamelberg/graph-native-agent-control-plane/actions/workflows/conformance.yml)
+[![CodeQL](https://github.com/danielhamelberg/graph-native-agent-control-plane/actions/workflows/codeql.yml/badge.svg)](https://github.com/danielhamelberg/graph-native-agent-control-plane/actions/workflows/codeql.yml)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache--2.0-blue.svg)](LICENSE)
+
 A small, typed reference implementation for making agent coordination, validation, recovery,
 and completion explicit graph operations.
 
@@ -96,7 +100,8 @@ For an end-to-end, hash-chained replay, see
 - Fail-closed behavior at malformed JSON, stale graph, illegal transition, and adapter boundaries.
 
 The architecture is documented in [Architecture](docs/ARCHITECTURE.md). The design thesis is in
-[Graph-Native Harness Thesis](docs/GRAPH_NATIVE_HARNESS_THESIS.md).
+[Graph-Native Harness Thesis](docs/GRAPH_NATIVE_HARNESS_THESIS.md), with terminology research in
+[Prior Art](docs/PRIOR_ART.md).
 
 ## Public boundary
 

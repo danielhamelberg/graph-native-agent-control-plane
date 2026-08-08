@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software, cite the repository and exact revision."
+title: "Graph-Native Agent Control Plane"
+type: software
+authors:
+  - family-names: "Hamelberg"
+    given-names: "Daniel"
+version: "0.1.0-alpha.1"
+date-released: "2026-08-08"
+license: "Apache-2.0"
+repository-code: "https://github.com/danielhamelberg/graph-native-agent-control-plane"
+url: "https://github.com/danielhamelberg/graph-native-agent-control-plane"
+abstract: >-
+  Typed, deterministic control-plane primitives for graph-native agent harnesses, including
+  immutable graph definitions, hash-chained execution events, replayable state reduction,
+  deterministic scheduling, versioned rewriting, and graph-authorized completion.
+keywords:
+  - "agent harness"
+  - "control plane"
+  - "graph engineering"
+  - "deterministic orchestration"
+  - "agent evaluation"

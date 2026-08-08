@@ -8,6 +8,10 @@ and mutable orchestration code.**
 
 This is an engineering thesis, not a benchmark conclusion.
 
+The terminology is not claimed as original. Public projects were already using “graph engineering”
+and “graph-native harness” for adjacent ideas before this release; see
+[Terminology and Prior Art](PRIOR_ART.md).
+
 ## Why “graph-native” matters
 
 Many systems visualize an execution trace as a graph after the fact. A graph-native harness goes
