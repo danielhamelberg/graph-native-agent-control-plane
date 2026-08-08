@@ -101,6 +101,8 @@ class NodeDefinition:
     input_ports: tuple[Port, ...] = ()
     output_ports: tuple[Port, ...] = ()
     terminal_outcome: TerminalOutcome | None = None
+    evidence_required: bool = False
+    side_effect_confirmation_required: bool = False
 
     def __post_init__(self) -> None:
         _require_identifier(self.node_id, "node")
@@ -110,6 +112,8 @@ class NodeDefinition:
             raise GraphModelError("terminal node requires a terminal outcome")
         if self.kind is not NodeKind.TERMINAL and self.terminal_outcome is not None:
             raise GraphModelError("non-terminal node cannot declare a terminal outcome")
+        if self.side_effect_confirmation_required and self.kind is not NodeKind.TOOL:
+            raise GraphModelError("side-effect confirmation may be required only for tool nodes")
 
     @staticmethod
     def _validate_ports(ports: tuple[Port, ...], direction: str) -> None:
@@ -125,12 +129,14 @@ class NodeDefinition:
 
     def as_json(self) -> dict[str, object]:
         return {
+            "evidence_required": self.evidence_required,
             "input_ports": [port.as_json() for port in sorted(self.input_ports)],
             "kind": self.kind.value,
             "node_id": self.node_id,
             "output_ports": [port.as_json() for port in sorted(self.output_ports)],
             "priority": self.priority,
             "required": self.required,
+            "side_effect_confirmation_required": self.side_effect_confirmation_required,
             "terminal_outcome": (
                 self.terminal_outcome.value if self.terminal_outcome is not None else None
             ),
