@@ -38,6 +38,10 @@ class StrictJsonTests(unittest.TestCase):
     def test_valid_json_allows_surrounding_whitespace(self) -> None:
         self.assertEqual(loads_strict(b" \r\n {\"a\": [true, null, 2]} \t"), {"a": [True, None, 2]})
 
+    def test_malformed_json_is_rejected(self) -> None:
+        with self.assertRaisesRegex(CanonicalJsonError, "invalid JSON"):
+            loads_strict(b"{")
+
 
 class CanonicalJsonTests(unittest.TestCase):
     def test_canonical_bytes_are_sorted_utf8_compact_and_lf_terminated(self) -> None:
@@ -55,6 +59,17 @@ class CanonicalJsonTests(unittest.TestCase):
     def test_non_finite_floats_are_rejected(self) -> None:
         with self.assertRaisesRegex(CanonicalJsonError, "non-finite"):
             canonical_bytes({"bad": float("nan")})
+
+    def test_finite_float_and_nested_containers_are_supported(self) -> None:
+        self.assertEqual(canonical_bytes({"values": [1.5]}), b'{"values":[1.5]}\n')
+
+    def test_non_string_object_names_are_rejected(self) -> None:
+        with self.assertRaisesRegex(CanonicalJsonError, "names must be strings"):
+            canonical_bytes({1: "invalid"})
+
+    def test_unpaired_surrogate_is_rejected_at_utf8_boundary(self) -> None:
+        with self.assertRaisesRegex(CanonicalJsonError, "serialized canonically"):
+            canonical_bytes("\ud800")
 
 
 if __name__ == "__main__":

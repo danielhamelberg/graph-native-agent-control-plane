@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unittest
 from dataclasses import replace
+from typing import cast
 
 from graph_native_agent_control_plane.model import (
     EdgeDefinition,
@@ -91,6 +92,81 @@ class SchedulerTests(unittest.TestCase):
         self.assertEqual(parallel_batch(graph, state, limit=2), ("alpha", "beta"))
         with self.assertRaisesRegex(SchedulerError, "positive"):
             parallel_batch(graph, state, limit=0)
+
+        with self.assertRaisesRegex(SchedulerError, "positive"):
+            parallel_batch(graph, state, limit=True)
+
+    def test_data_flow_requires_accepted_authoritative_output(self) -> None:
+        graph = GraphDefinition.create(
+            nodes=(agent_node(), validator_node()),
+            edges=(
+                EdgeDefinition(
+                    "agent_to_validator",
+                    EdgeKind.DATA_FLOW,
+                    "agent",
+                    "validator",
+                    source_port="result",
+                    target_port="candidate",
+                ),
+            ),
+        )
+        self.assertNotIn("validator", eligible_nodes(graph, with_states(graph)))
+        accepted = with_states(graph, agent=NodeState.ACCEPTED)
+        self.assertNotIn("validator", eligible_nodes(graph, accepted))
+        with_output = replace(accepted, authoritative_outputs=(("agent", b"{}\n"),))
+        self.assertIn("validator", eligible_nodes(graph, with_output))
+
+    def test_evidence_and_recovery_edges_have_distinct_conditions(self) -> None:
+        evidence_graph = GraphDefinition.create(
+            nodes=(agent_node("source"), agent_node("target")),
+            edges=(EdgeDefinition("evidence", EdgeKind.EVIDENCE, "source", "target"),),
+        )
+        accepted = with_states(evidence_graph, source=NodeState.ACCEPTED)
+        self.assertNotIn("target", eligible_nodes(evidence_graph, accepted))
+        evidenced = replace(accepted, evidence_nodes=("source",))
+        self.assertIn("target", eligible_nodes(evidence_graph, evidenced))
+
+        recovery_graph = GraphDefinition.create(
+            nodes=(agent_node("source"), agent_node("target")),
+            edges=(EdgeDefinition("recover", EdgeKind.RECOVERY, "source", "target"),),
+        )
+        self.assertNotIn("target", eligible_nodes(recovery_graph, with_states(recovery_graph)))
+        failed = with_states(recovery_graph, source=NodeState.FAILED)
+        self.assertIn("target", eligible_nodes(recovery_graph, failed))
+
+    def test_inhibition_is_satisfied_until_source_is_accepted(self) -> None:
+        graph = GraphDefinition.create(
+            nodes=(agent_node("inhibitor"), agent_node("target")),
+            edges=(EdgeDefinition("inhibit", EdgeKind.INHIBITION, "inhibitor", "target"),),
+        )
+        self.assertIn("target", eligible_nodes(graph, with_states(graph)))
+
+    def test_stale_invalidated_and_running_nodes_are_not_schedulable(self) -> None:
+        graph = GraphDefinition.create(nodes=(agent_node(),), edges=())
+        stale = replace(with_states(graph), graph_id="stale")
+        with self.assertRaisesRegex(SchedulerError, "different graph"):
+            eligible_nodes(graph, stale)
+        invalidated = replace(with_states(graph), invalidated_nodes=("agent",))
+        self.assertEqual(eligible_nodes(graph, invalidated), ())
+        self.assertEqual(eligible_nodes(graph, with_states(graph, agent=NodeState.RUNNING)), ())
+
+    def test_unknown_edge_kind_is_rejected(self) -> None:
+        class UnknownKind:
+            value = "unknown"
+
+        graph = GraphDefinition.create(
+            nodes=(agent_node("source"), agent_node("target")),
+            edges=(
+                EdgeDefinition(
+                    "unknown_edge",
+                    cast(EdgeKind, UnknownKind()),
+                    "source",
+                    "target",
+                ),
+            ),
+        )
+        with self.assertRaisesRegex(SchedulerError, "unsupported edge kind"):
+            eligible_nodes(graph, with_states(graph))
 
 
 if __name__ == "__main__":

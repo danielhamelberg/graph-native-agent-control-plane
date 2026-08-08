@@ -139,6 +139,96 @@ class GraphModelTests(unittest.TestCase):
         with self.assertRaisesRegex(GraphModelError, "completion node must be terminal"):
             GraphDefinition.create(nodes=(agent_node(),), edges=(), completion_node_ids=("agent",))
 
+        with self.assertRaisesRegex(GraphModelError, "unknown completion node"):
+            GraphDefinition.create(
+                nodes=(terminal_node(),),
+                edges=(),
+                completion_node_ids=("missing",),
+            )
+
+    def test_ports_and_side_effect_contracts_fail_closed(self) -> None:
+        with self.assertRaisesRegex(GraphModelError, "schema identifier"):
+            Port("result", "")
+        with self.assertRaisesRegex(GraphModelError, "side-effect confirmation"):
+            NodeDefinition(
+                "agent",
+                NodeKind.AGENT,
+                0,
+                True,
+                side_effect_confirmation_required=True,
+            )
+        duplicate = Port("result", "urn:schema:result")
+        with self.assertRaisesRegex(GraphModelError, "duplicate output port"):
+            NodeDefinition(
+                "agent",
+                NodeKind.AGENT,
+                0,
+                True,
+                output_ports=(duplicate, duplicate),
+            )
+
+    def test_edge_port_declarations_match_edge_kind(self) -> None:
+        with self.assertRaisesRegex(GraphModelError, "requires source and target ports"):
+            EdgeDefinition("flow", EdgeKind.DATA_FLOW, "agent", "validator")
+        with self.assertRaisesRegex(GraphModelError, "only data-flow edges"):
+            EdgeDefinition(
+                "dependency",
+                EdgeKind.DEPENDENCY,
+                "agent",
+                "validator",
+                source_port="result",
+            )
+
+    def test_graph_version_and_lookup_are_validated(self) -> None:
+        with self.assertRaisesRegex(GraphModelError, "version must be positive"):
+            GraphDefinition.create(nodes=(), edges=(), version=0)
+        graph = GraphDefinition.create(nodes=(agent_node(),), edges=())
+        with self.assertRaisesRegex(GraphModelError, "unknown node"):
+            graph.node("missing")
+        self.assertEqual(graph.as_json()["graph_id"], graph.graph_id)
+
+    def test_unknown_source_and_missing_data_ports_are_rejected(self) -> None:
+        consumer = validator_node("consumer")
+        with self.assertRaisesRegex(GraphModelError, "unknown source node"):
+            GraphDefinition.create(
+                nodes=(consumer,),
+                edges=(dependency_edge(source="missing", target="consumer"),),
+            )
+
+        missing_source = EdgeDefinition(
+            "missing_source_port",
+            EdgeKind.DATA_FLOW,
+            "agent",
+            "consumer",
+            source_port="missing",
+            target_port="candidate",
+        )
+        with self.assertRaisesRegex(GraphModelError, "unknown source port"):
+            GraphDefinition.create(nodes=(agent_node(), consumer), edges=(missing_source,))
+
+        missing_target = EdgeDefinition(
+            "missing_target_port",
+            EdgeKind.DATA_FLOW,
+            "agent",
+            "consumer",
+            source_port="result",
+            target_port="missing",
+        )
+        with self.assertRaisesRegex(GraphModelError, "unknown target port"):
+            GraphDefinition.create(nodes=(agent_node(), consumer), edges=(missing_target,))
+
+    def test_valid_data_flow_and_serialization(self) -> None:
+        edge = EdgeDefinition(
+            "agent_to_validator",
+            EdgeKind.DATA_FLOW,
+            "agent",
+            "validator",
+            source_port="result",
+            target_port="candidate",
+        )
+        graph = GraphDefinition.create(nodes=(agent_node(), validator_node()), edges=(edge,))
+        self.assertEqual(graph.edges[0].as_json()["kind"], "data_flow")
+
 
 if __name__ == "__main__":
     unittest.main()

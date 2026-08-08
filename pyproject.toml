@@ -48,7 +48,7 @@ strict = true
 warn_unreachable = true
 
 [tool.pyright]
-include = ["src", "tests"]
+include = ["src", "tests", "scripts"]
 pythonVersion = "3.12"
 typeCheckingMode = "strict"
 

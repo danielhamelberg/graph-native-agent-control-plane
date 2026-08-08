@@ -128,6 +128,12 @@ class CompletionCheckpointTests(unittest.TestCase):
         with self.assertRaisesRegex(CompletionError, "different graph"):
             evaluate_completion(graph, state)
 
+    def test_graph_without_completion_node_is_rejected(self) -> None:
+        graph = GraphDefinition.create(nodes=(agent_node(),), edges=())
+        state = MaterializedState.initial(graph, "execution_one")
+        with self.assertRaisesRegex(CompletionError, "no completion node"):
+            evaluate_completion(graph, state)
+
 
 if __name__ == "__main__":
     unittest.main()
