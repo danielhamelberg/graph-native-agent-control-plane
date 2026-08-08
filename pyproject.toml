@@ -1,0 +1,62 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "graph-native-agent-control-plane"
+version = "0.1.0a1"
+description = "Typed, deterministic control-plane primitives for graph-native agent harnesses"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "Apache-2.0"
+authors = [{ name = "Daniel Hamelberg" }]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Typing :: Typed",
+]
+dependencies = ["jsonschema[format]>=4.25,<5"]
+
+[dependency-groups]
+dev = [
+  "build>=1.2,<2",
+  "coverage[toml]>=7.8,<8",
+  "hypothesis>=6.130,<7",
+  "mypy>=1.17,<2",
+  "pyright>=1.1.400,<2",
+  "ruff>=0.12,<1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/graph_native_agent_control_plane"]
+
+[tool.coverage.run]
+branch = true
+source = ["graph_native_agent_control_plane"]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+skip_covered = false
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+
+[tool.pyright]
+include = ["src", "tests"]
+pythonVersion = "3.12"
+typeCheckingMode = "strict"
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["B", "C4", "E", "F", "I", "PTH", "RUF", "SIM", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = ["S101"]
