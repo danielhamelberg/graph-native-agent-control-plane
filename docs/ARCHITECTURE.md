@@ -54,9 +54,10 @@ bounded.
 ## Completion authority
 
 Completion is evaluated from graph and materialized state, never from an agent's textual claim.
-Required nonterminal nodes must be accepted and current. Required approvals, evidence, and
-side-effect confirmations must exist. Blocking conflicts must be resolved. The decision returns an
-authorization flag, a typed terminal or partial outcome, and a lexically ordered blocker set.
+Authorization requires three conditions: every required nonterminal node is accepted and current;
+all required approvals, evidence, and side-effect confirmations exist; and every blocking conflict
+is resolved. The decision returns an authorization flag, a typed terminal or partial outcome, and a
+lexically ordered blocker set.
 
 ## Graph rewriting
 

@@ -33,7 +33,7 @@ typed graph -> eligible transition -> recorded event -> reduced state -> validat
 
 ## The engineering object
 
-The object being engineered is not only a prompt or workflow. It is a versioned control graph with:
+Beyond the prompt or workflow, engineering centers on a versioned control graph with:
 
 - typed execution, validation, approval, recovery, synthesis, and terminal nodes;
 - dependency, data, activation, inhibition, evidence, and completion edges;
@@ -48,9 +48,9 @@ monolithic prompt.
 
 ## Selective intervention
 
-The architecture does not imply activating every control for every task. The useful pattern is
-sparse, conditional intervention: detect a task-state condition, activate the smallest relevant
-control, measure its marginal effect, and retain it only if it passes an external evaluation gate.
+The architecture permits sparse, conditional intervention; it does not require every control on
+every task. The pattern is to detect a task-state condition, activate the smallest relevant control,
+measure its marginal effect, and retain it only if it passes an external evaluation gate.
 
 The included Selective Completeness Activation is one preliminary example of that pattern. The
 Completion Checkpoint is a different, post-execution mechanism awaiting external performance

@@ -51,9 +51,9 @@ On one frozen 10-task Terminal-Bench 2.0 sample, across two local repetitions, t
 candidate recorded 18/20 successful task-runs versus 16/20 for direct Codex. The ledger also
 recorded two paired wins, zero paired losses, and lower measured token units per success.
 
-This is **Class C, provenance-limited preliminary evidence**. It is not an independent replication,
-does not establish statistical generality, and does not show that this clean repository reproduces
-the result. The original accepted commit omitted imported runtime files that existed only in its
+This is **Class C, provenance-limited preliminary evidence**. It is not an independent replication.
+The result supplies no evidence of statistical generality, and the clean repository has not yet
+reproduced it. The original accepted commit omitted imported runtime files that existed only in its
 working tree. The exact extracted transformation is hash-bound here; a source-closed rerun from a
 clean checkout remains required. See [Evidence](docs/EVIDENCE.md) and
 [Limitations](docs/LIMITATIONS.md).

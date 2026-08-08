@@ -38,8 +38,8 @@ controls before consequential use.
 
 Graph construction, canonical serialization, event reduction, scheduling, completion, and checked-in
 replay are deterministic for identical inputs. External agents, tools, validators, clocks, networks,
-and storage systems can still be nondeterministic. The control plane records their accepted results;
-it does not make those systems deterministic.
+and storage systems can still be nondeterministic. The control plane records accepted results
+without making those systems deterministic.
 
 ## Security boundary
 

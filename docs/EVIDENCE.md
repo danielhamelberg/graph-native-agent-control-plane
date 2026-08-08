@@ -55,10 +55,10 @@ It does not show that:
 
 ## Graduation criteria
 
-The qualification can be narrowed only after a frozen, source-closed evaluation package is run from
-a clean checkout and independently adjudicated. A stronger claim additionally requires unseen
-tasks, more repetitions, confidence intervals suited to the paired design, cost and latency data,
-regression and adversarial suites, and preferably an external rerun.
+Narrowing the qualification requires a frozen, source-closed evaluation package run from a clean
+checkout and independently adjudicated. A stronger claim additionally requires unseen tasks, more
+repetitions, confidence intervals suited to the paired design, cost and latency data, regression and
+adversarial suites, and preferably an external rerun.
 
 Any new result should retain the old ledger rather than overwrite it, bind exact source and data
 hashes, and state its evidence class explicitly.
