@@ -104,6 +104,10 @@ def main() -> int:
     python = sys.executable
     commands: tuple[tuple[str, tuple[str, ...]], ...] = (
         (
+            "release_manifest",
+            (python, "scripts/release_manifest.py", "--check"),
+        ),
+        (
             "unit_property_tests",
             (python, "-m", "coverage", "run", "--branch", "-m", "unittest", "discover"),
         ),
@@ -115,7 +119,7 @@ def main() -> int:
             "schema_and_seed_determinism",
             (python, "-m", "unittest", "tests.test_schemas_and_replay"),
         ),
-        ("package_build", (python, "-m", "build")),
+        ("reproducible_build", (python, "scripts/reproducible_build.py")),
     )
     passed: list[str] = []
     failed = False
